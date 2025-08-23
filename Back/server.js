@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors'); // Importe o pacote cors
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Middleware para permitir requisições de outras origens
 app.use(cors());
@@ -12,9 +12,21 @@ app.use(express.json());
 
 const dbPath = path.join(__dirname, 'data', 'database.json');
 
-const readDatabase = () => {
+/*const readDatabase = () => {
     const data = fs.readFileSync(dbPath, 'utf-8');
     return JSON.parse(data);
+};*/
+
+const readDatabase = () => {
+    try {
+        console.log('Tentando ler database de:', dbPath);
+        const data = fs.readFileSync(dbPath, 'utf-8');
+        console.log('Database lido com sucesso');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Erro ao ler database:', error.message);
+        throw error;
+    }
 };
 
 const saveDatabase = (data) => {
@@ -24,25 +36,25 @@ const saveDatabase = (data) => {
 // --- ROTAS DE AUTENTICAÇÃO ---
 
 // Rota para criar nova conta
-app.post('/api/register', (req, res) => {
-    const { name, email, password } = req.body;
+app.post('/api/novo-usuario', (req, res) => {
+    const { nome, email, senha } = req.body;
     const db = readDatabase();
-    if (db.users.find(u => u.email === email)) {
+    if (db.usuarios.find(u => u.email === email)) {
         return res.status(409).json({ message: 'Email já cadastrado.' });
     }
-    const newUser = { id: Date.now(), name, email, password };
-    db.users.push(newUser);
+    const novoUsuario = { id: Date.now(), nome, email, senha };
+    db.usuarios.push(novoUsuario);
     saveDatabase(db);
-    res.status(201).json({ message: 'Conta criada com sucesso!', user: newUser });
+    res.status(201).json({ message: 'Conta criada com sucesso!', usuario: novoUsuario });
 });
 
 // Rota de login
 app.post('/api/login', (req, res) => {
-    const { email, password } = req.body;
+    const { email, senha } = req.body;
     const db = readDatabase();
-    const user = db.users.find(u => u.email === email && u.password === password);
-    if (user) {
-        res.status(200).json({ message: 'Login bem-sucedido!', user });
+    const usuario = db.usuarios.find(u => u.email === email && u.senha === senha);
+    if (usuario) {
+        res.status(200).json({ message: 'Login bem-sucedido!', usuario });
     } else {
         res.status(401).json({ message: 'Credenciais inválidas.' });
     }
@@ -50,52 +62,57 @@ app.post('/api/login', (req, res) => {
 
 // --- ROTAS DE TAREFAS ---
 
+app.get('/test', (req, res) => {
+    res.json({ message: 'Servidor funcionando!' });
+});
+
 // Rota para obter tarefas de um usuário
-app.get('/api/tasks/:userId', (req, res) => {
-    const userId = parseInt(req.params.userId);
+app.get('/api/tarefas/:usuarioId', (req, res) => {
+    const usuarioId = parseInt(req.params.usuarioId);
+    console.log(usuarioId);
     const db = readDatabase();
-    const userTasks = db.tasks.filter(task => task.userId === userId);
-    res.status(200).json(userTasks);
+    const usuarioTarefas = db.tarefas.filter(tarefas => tarefas.usuarioId === usuarioId);
+    res.status(200).json(usuarioTarefas);
 });
 
 // Rota para criar nova tarefa
-app.post('/api/tasks', (req, res) => {
-    const { userId, title, description, dueDate } = req.body;
+app.post('/api/tarefas', (req, res) => {
+    const { usuarioId, titulo, descricao, dataVencimento } = req.body;
     const db = readDatabase();
-    const newTask = {
+    const novaTarefa = {
         id: Date.now(),
-        userId,
-        title,
-        description,
-        dueDate,
-        completed: false
+        usuarioId,
+        titulo,
+        descricao,
+        dataVencimento,
+        finalizada: false
     };
-    db.tasks.push(newTask);
+    db.tarefas.push(novaTarefa);
     saveDatabase(db);
-    res.status(201).json({ message: 'Tarefa criada com sucesso!', task: newTask });
+    res.status(201).json({ message: 'Tarefa criada com sucesso!', tarefas: novaTarefa });
 });
 
 // Rota para alterar uma tarefa
-app.put('/api/tasks/:id', (req, res) => {
-    const taskId = parseInt(req.params.id);
-    const { title, description, dueDate, completed } = req.body;
+app.put('/api/tarefas/:id', (req, res) => {
+    const tarefasId = parseInt(req.params.id);
+    const { titulo, descricao, dataVencimento, finalizada } = req.body;
     const db = readDatabase();
-    const taskIndex = db.tasks.findIndex(task => task.id === taskId);
-    if (taskIndex === -1) {
+    const tarefasIndex = db.tarefas.findIndex(tarefas => tarefas.id === tarefasId);
+    if (tarefasIndex === -1) {
         return res.status(404).json({ message: 'Tarefa não encontrada.' });
     }
-    db.tasks[taskIndex] = { ...db.tasks[taskIndex], title, description, dueDate, completed };
+    db.tarefas[tarefasIndex] = { ...db.tarefas[tarefasIndex], titulo, descricao, dataVencimento, finalizada };
     saveDatabase(db);
-    res.status(200).json({ message: 'Tarefa atualizada com sucesso!', task: db.tasks[taskIndex] });
+    res.status(200).json({ message: 'Tarefa atualizada com sucesso!', Tarefa: db.tarefas[tarefasIndex] });
 });
 
 // Rota para remover uma tarefa
-app.delete('/api/tasks/:id', (req, res) => {
-    const taskId = parseInt(req.params.id);
+app.delete('/api/tarefas/:id', (req, res) => {
+    const tarefasId = parseInt(req.params.id);
     const db = readDatabase();
-    const initialLength = db.tasks.length;
-    db.tasks = db.tasks.filter(task => task.id !== taskId);
-    if (db.tasks.length === initialLength) {
+    const contadorTarefas = db.tarefas.length;
+    db.tarefas = db.tarefas.filter(tarefas => tarefas.id !== tarefasId);
+    if (db.tarefas.length === contadorTarefas) {
         return res.status(404).json({ message: 'Tarefa não encontrada.' });
     }
     saveDatabase(db);

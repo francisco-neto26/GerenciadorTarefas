@@ -1,0 +1,20 @@
+{
+  "usuarios": [
+    {
+      "id": 1755820879242,
+      "nome": "Francisco Miguel Ludwig Neto",
+      "email": "neto.ludwig@hotmail.com",
+      "senha": "123456"
+    }
+  ],
+  "tarefas": [
+    {
+      "id": 1755820933679,
+      "usuarioId": 1755820879242,
+      "titulo": "teste",
+      "descricao": "testes de tarefa",
+      "dataVencimento": "2025-08-21T02:59:59.000Z",
+      "finalizada": true
+    }
+  ]
+}
