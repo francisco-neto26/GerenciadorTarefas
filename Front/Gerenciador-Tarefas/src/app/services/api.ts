@@ -83,6 +83,7 @@ export class ApiService {
     );
   }
 
+
   logout(): void {
     this.usuarioLogadoSignal.set(null);
     this.autenticadoSignal.set(false);
@@ -90,6 +91,19 @@ export class ApiService {
 
   obterUsuarioLogado(): Usuario | null {
     return this.usuarioLogado();
+  }
+
+  definirUsuario(usuario: Usuario): void {
+    const usuarioLimpo: Usuario = {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email
+    };
+
+    this.usuarioLogadoSignal.set(usuarioLimpo);
+    this.autenticadoSignal.set(true);
+
+    console.log('Usuário definido em memória:', usuarioLimpo);
   }
 
   // ===== MÉTODOS DE TAREFAS =====

@@ -1,0 +1,80 @@
+<nav class="navbar navbar-expand-lg barra">
+    <div class="container-fluid">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand marca" routerLink="/principal">
+            <img class="logo-navbar" src="gerenciamento-de-tarefas.png">
+            <i class="fas fa-tasks icone-marca"></i>
+            Gerenciador de Tarefas
+        </a>
+
+        <!-- Botão toggle para mobile -->
+        <button class="navbar-toggler botao-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu principal -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Links de navegação -->
+            <ul class="navbar-nav menu-esquerda">
+                <li class="nav-item">
+                    <a class="nav-link link-nav" routerLink="/tarefas" routerLinkActive="ativo">
+                        <i class="fas fa-list"></i>
+                        Minhas Tarefas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-nav" routerLink="/dashboard" routerLinkActive="ativo">
+                        <i class="fas fa-chart-bar"></i>
+                        Dashboard
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Menu do usuário (lado direito) -->
+            @if (usuarioLogado()) {
+            <ul class="navbar-nav menu-direita">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle menu-usuario" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle icone-usuario"></i>
+                        {{ nomeUsuario() }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-usuario" aria-labelledby="navbarDropdown">
+                        <li>
+                            <h6 class="dropdown-header cabecalho-usuario">
+                                <i class="fas fa-envelope"></i>
+                                {{ emailUsuario() }}
+                            </h6>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <button class="dropdown-item item-menu" (click)="onPerfil()">
+                                <i class="fas fa-user"></i>
+                                Meu Perfil
+                            </button>
+                        </li>
+                        <li>
+                            <a class="dropdown-item item-menu" routerLink="/configuracoes">
+                                <i class="fas fa-cog"></i>
+                                Configurações
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <button class="dropdown-item item-menu sair" (click)="onLogout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sair
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            }
+        </div>
+    </div>
+</nav>

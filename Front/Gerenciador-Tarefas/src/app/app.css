@@ -1,0 +1,16 @@
+.main-content {
+  min-height: calc(100vh - 56px); /* Altura da navbar */
+  padding-top: 0;
+}
+
+/* Ajustes para páginas que não têm navbar */
+:host:not(:has(app-barra-navegacao)) .main-content {
+  min-height: 100vh;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+}

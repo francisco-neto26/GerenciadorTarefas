@@ -1,0 +1,148 @@
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="row w-100">
+        <div class="col-md-6 col-lg-4 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+                        <h2 class="card-title">{{ modoLogin ? 'Login' : 'Criar Conta' }}</h2>
+                        <p class="text-muted">Gerencie suas tarefas de forma eficiente</p>
+                    </div>
+                    
+                    <!-- Alerts -->
+                    @if (mensagemErro) {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {{ mensagemErro }}
+                        <button type="button" class="btn-close" aria-label="Close" (click)="mensagemErro = ''"></button>
+                    </div>
+                    }
+
+                    @if (mensagemSucesso) {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        {{ mensagemSucesso }}
+                        <button type="button" class="btn-close" aria-label="Close" (click)="mensagemSucesso = ''"></button>
+                    </div>
+                    }
+
+                    <!-- Formulário Reactive -->
+                    <form [formGroup]="formularioAuth" (ngSubmit)="onSubmit()">
+                        <!-- Campo Nome (apenas no registro) -->
+                        @if (!modoLogin) {
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">
+                                <i class="fas fa-user me-2"></i>Nome Completo
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg"
+                                [class.is-invalid]="campoTemErro('nome')"
+                                id="nome" 
+                                formControlName="nome"
+                                placeholder="Digite seu nome completo">
+                            @if (campoTemErro('nome')) {
+                            <div class="invalid-feedback">
+                                {{ obterErrosCampo('nome') }}
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        <!-- Campo Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>E-mail
+                            </label>
+                            <input 
+                                type="email" 
+                                class="form-control form-control-lg"
+                                [class.is-invalid]="campoTemErro('email')"
+                                id="email" 
+                                formControlName="email"
+                                placeholder="Digite seu e-mail">
+                            @if (campoTemErro('email')) {
+                            <div class="invalid-feedback">
+                                {{ obterErrosCampo('email') }}
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Campo Senha -->
+                        <div class="mb-3">
+                            <label for="senha" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Senha
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control form-control-lg"
+                                [class.is-invalid]="campoTemErro('senha')"
+                                id="senha" 
+                                formControlName="senha"
+                                placeholder="Digite sua senha">
+                            @if (campoTemErro('senha')) {
+                            <div class="invalid-feedback">
+                                {{ obterErrosCampo('senha') }}
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Campo Confirmar Senha (apenas no registro) -->
+                        @if (!modoLogin) {
+                        <div class="mb-4">
+                            <label for="confirmarSenha" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Confirmar Senha
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control form-control-lg"
+                                [class.is-invalid]="campoTemErro('confirmarSenha')"
+                                id="confirmarSenha" 
+                                formControlName="confirmarSenha"
+                                placeholder="Confirme sua senha">
+                            @if (campoTemErro('confirmarSenha')) {
+                            <div class="invalid-feedback">
+                                {{ obterErrosCampo('confirmarSenha') }}
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        <!-- Botão de Submit -->
+                        <div class="d-grid mb-3">
+                            <button 
+                                type="submit" 
+                                class="btn btn-primary btn-lg"
+                                [disabled]="carregando || formularioAuth.invalid">
+                                @if (carregando) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                }
+                                @if (!carregando && modoLogin) {
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                }
+                                @if (!carregando && !modoLogin) {
+                                <i class="fas fa-user-plus me-2"></i>
+                                }
+                                {{ carregando ? 'Processando...' : (modoLogin ? 'Entrar' : 'Criar Conta') }}
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Link para alternar entre login e registro -->
+                    <div class="text-center">
+                        <p class="mb-0">
+                            {{ modoLogin ? 'Não tem uma conta?' : 'Já tem uma conta?' }}
+                            <button 
+                                type="button" 
+                                class="btn btn-link p-0 ms-1" 
+                                (click)="alternarModo()"
+                                [disabled]="carregando">
+                                {{ modoLogin ? 'Criar conta' : 'Fazer login' }}
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

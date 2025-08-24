@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors'); // Importe o pacote cors
 const app = express();
-const port = 3001;
+const port = 3000;
 
 // Middleware para permitir requisições de outras origens
 app.use(cors());
@@ -19,9 +19,7 @@ const dbPath = path.join(__dirname, 'data', 'database.json');
 
 const readDatabase = () => {
     try {
-        console.log('Tentando ler database de:', dbPath);
         const data = fs.readFileSync(dbPath, 'utf-8');
-        console.log('Database lido com sucesso');
         return JSON.parse(data);
     } catch (error) {
         console.error('Erro ao ler database:', error.message);
